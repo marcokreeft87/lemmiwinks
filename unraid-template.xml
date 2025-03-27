@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0"?>
 <Container>
   <Name>Lemmiwinks</Name>
-  <Repository>lemmiwinks:latest</Repository>
+  <Repository>marcokreeft/lemmiwinks:latest</Repository>
   <Network>bridge</Network>
   <MyIP/>
   <Privileged>false</Privileged>
@@ -32,17 +32,5 @@
     </Publish>
   </Networking>
   <Data/>
-  <Environment>
-    <Variable>
-      <Name>ASPNETCORE_URLS</Name>
-      <Value>http://+:8080</Value>
-      <Description>Bind .NET app to all interfaces on port 8080</Description>
-    </Variable>
-    <Variable>
-      <Name>DOTNET_RUNNING_IN_CONTAINER</Name>
-      <Value>true</Value>
-      <Description>Indicates the app is running inside a container</Description>
-    </Variable>
-  </Environment>
   <Config Name="AppData Config Path" Target="/config" Default="" Mode="rw" Description="Path for persistent app data" Type="Path"/>
 </Container>
