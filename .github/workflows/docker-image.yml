@@ -1,0 +1,49 @@
+name: Build and Publish Docker Image
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Set version number (yyyyMMddHHmm)
+      - name: Generate timestamp version
+        id: version
+        run: echo "VERSION=$(date +'%Y%m%d%H%M')" >> $GITHUB_ENV
+
+      # Login to Docker Hub
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+      # Build and push Docker image
+      - name: Build and push Docker image
+        run: |
+          docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/lemmiwinks:${{ env.VERSION }} .
+          docker tag ${{ secrets.DOCKER_HUB_USERNAME }}/lemmiwinks:${{ env.VERSION }} ${{ secrets.DOCKER_HUB_USERNAME }}/lemmiwinks:latest
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/lemmiwinks:${{ env.VERSION }}
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/lemmiwinks:latest
+
+      # Create a GitHub Release
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.VERSION }}
+          name: Release ${{ env.VERSION }}
+          body: |
+            Automated release from GitHub Actions.
+            - Docker Image: `${{ secrets.DOCKER_HUB_USERNAME }}/lemmiwinks:${{ env.VERSION }}`
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
