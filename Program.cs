@@ -25,6 +25,9 @@ app.MapGet("/proxy", async (HttpContext context) =>
         var response = await httpClient.GetAsync(uri);
         response.EnsureSuccessStatusCode();
 
+        // Log the request
+        Console.WriteLine($"Fetched {url} with status code {response.StatusCode}");
+
         // Read response content
         var content = await response.Content.ReadAsStringAsync();
         var contentType = response.Content.Headers.ContentType?.ToString() ?? "application/octet-stream";
