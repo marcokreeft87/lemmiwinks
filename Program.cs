@@ -4,7 +4,15 @@ using System.Net.Http.Headers;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add CORS services
-builder.Services.AddCors();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
 
 var app = builder.Build();
 
@@ -16,11 +24,7 @@ var handler = new HttpClientHandler
 var httpClient = new HttpClient(handler);
 
 // Enable CORS for all origins, methods, and headers
-app.UseCors(policy => policy
-    .AllowAnyOrigin()
-    .AllowAnyMethod()
-    .AllowAnyHeader()
-);
+app.UseCors("AllowAll");
 
 app.MapGet("/proxy", async (HttpContext context) =>
 {
@@ -63,9 +67,9 @@ app.MapGet("/proxy", async (HttpContext context) =>
 
 
         // Set the CORS headers
-        context.Response.Headers.Append("Access-Control-Allow-Origin", "*");
-        context.Response.Headers.Append("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-        context.Response.Headers.Append("Access-Control-Allow-Headers", "Content-Type, Authorization");
+        //context.Response.Headers.Append("Access-Control-Allow-Origin", "*");
+        //context.Response.Headers.Append("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+        //context.Response.Headers.Append("Access-Control-Allow-Headers", "Content-Type, Authorization");
 
         // Forward the Content-Type header to the client
         if (response.Content.Headers.ContentType != null)
