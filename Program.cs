@@ -1,4 +1,5 @@
 using System;
+using System.Net.Http.Headers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -54,7 +55,8 @@ app.MapGet("/proxy", async (HttpContext context) =>
 
         if (context.Request.Headers.ContainsKey("Authorization"))
         {
-            httpClient.DefaultRequestHeaders.Add("Authorization", context.Request.Headers["Authorization"].ToString());
+            var authHeaderParts = context.Request.Headers["Authorization"].ToString().Split('=', 2);
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(authHeaderParts[0], authHeaderParts[1]);
         }
 
         var response = await httpClient.GetAsync(url);
