@@ -29,7 +29,7 @@ app.MapGet("/proxy", async (HttpContext context, ILogger<Program> logger) =>
 {
     var url = context.Request.Query["url"];
 
-    logger.LogInformation($"Proxying request to {url}");
+    logger.LogInformation($"Proxying request to {url}. IP: {context.Connection.RemoteIpAddress?.ToString()}");
 
     if (context.Request.Headers.ContainsKey("Authorization"))
     {
