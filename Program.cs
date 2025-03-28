@@ -25,9 +25,11 @@ var httpClient = new HttpClient(handler);
 // Enable CORS for all origins, methods, and headers
 app.UseCors("AllowAll");
 
-app.MapGet("/proxy", async (HttpContext context) =>
+app.MapGet("/proxy", async (HttpContext context, ILogger<Program> logger) =>
 {
     var url = context.Request.Query["url"];
+
+    logger.LogInformation($"Proxying request to {url}");
 
     if (context.Request.Headers.ContainsKey("Authorization"))
     {
@@ -36,6 +38,8 @@ app.MapGet("/proxy", async (HttpContext context) =>
     }
 
     var response = await httpClient.GetAsync(url);
+
+    logger.LogInformation($"Received response from {url} with status code {response.StatusCode}");
 
     // Forward the Content-Type header to the client
     if (response.Content.Headers.ContentType != null)
