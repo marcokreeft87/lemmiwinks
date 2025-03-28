@@ -1,6 +1,5 @@
 # Lemmiwinks
 
-
 This application implements a **proxy service** that forwards HTTP requests to a target URL and returns the response back to the client. The proxy supports CORS (Cross-Origin Resource Sharing) for all origins, methods, and headers, and includes optional **Authorization** header forwarding for authentication. It also bypasses SSL certificate validation, making it suitable for development environments.
 
 ## Features
@@ -41,7 +40,6 @@ Content-Length: 1234
 ```
 
 The content of the response body will be the same as the content returned by the target URL.
-
 
 ## Usage
 
@@ -99,12 +97,24 @@ docker run -d -p 5000:5000 yourapp
 
 Now, you can access the proxy service on `http://localhost:5000`.
 
+## Pre-built Docker Image
+
+You can also use the pre-built Docker image from Docker Hub. The image is available here:
+
+[**Docker Hub - lemmiwinks**](https://hub.docker.com/repository/docker/marcokreeft/lemmiwinks/general)
+
+To pull the image and run it:
+
+```bash
+docker pull marcokreeft/lemmiwinks
+docker run -d -p 5000:5000 marcokreeft/lemmiwinks
+```
+
+Now, you can access the proxy service on `http://localhost:5000`.
+
 ---
 
 ## Security Note
 
 - **SSL Validation**: The application bypasses SSL validation for development environments. This should never be used in production environments where security is a concern.
   
----
-
-This README provides a detailed explanation of how the proxy service works and how to use it both locally and in a Docker container. Let me know if you need more details!
