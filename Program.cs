@@ -3,6 +3,13 @@ var app = builder.Build();
 
 var httpClient = new HttpClient();
 
+// Enable CORS for all origins, methods, and headers
+app.UseCors(policy => policy
+    .AllowAnyOrigin()
+    .AllowAnyMethod()
+    .AllowAnyHeader()
+);
+
 app.MapGet("/proxy", async (HttpContext context) =>
 {
     var url = context.Request.Query["url"];

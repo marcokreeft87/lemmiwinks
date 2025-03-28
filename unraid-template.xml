@@ -32,5 +32,4 @@
     </Publish>
   </Networking>
   <Data/>
-  <Config Name="AppData Config Path" Target="/config" Default="" Mode="rw" Description="Path for persistent app data" Type="Path"/>
 </Container>
