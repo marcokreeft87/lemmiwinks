@@ -5,7 +5,12 @@ builder.Services.AddCors();
 
 var app = builder.Build();
 
-var httpClient = new HttpClient();
+// Bypass SSL validation (for development only)
+var handler = new HttpClientHandler
+{
+    ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
+};
+var httpClient = new HttpClient(handler);
 
 // Enable CORS for all origins, methods, and headers
 app.UseCors(policy => policy
