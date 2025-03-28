@@ -35,6 +35,16 @@ app.MapGet("/proxy", async (HttpContext context) =>
         httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(authHeaderParts[0], authHeaderParts[1]);
     }
 
+    if (context.Request.Headers.ContainsKey("Origin"))
+    {
+        httpClient.DefaultRequestHeaders.Add("Origin", context.Request.Headers["Origin"].ToString());
+    }
+
+    if (context.Request.Headers.ContainsKey("Referer"))
+    {
+        httpClient.DefaultRequestHeaders.Add("Referer", context.Request.Headers["Referer"].ToString());
+    }
+
     var response = await httpClient.GetAsync(url);
 
     // Forward the Content-Type header to the client
