@@ -61,16 +61,23 @@ app.MapGet("/proxy", async (HttpContext context) =>
 
         var response = await httpClient.GetAsync(url);
 
+
         // Set the CORS headers
         context.Response.Headers.Append("Access-Control-Allow-Origin", "*");
         context.Response.Headers.Append("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
         context.Response.Headers.Append("Access-Control-Allow-Headers", "Content-Type, Authorization");
 
+        // Forward the Content-Type header to the client
+        if (response.Content.Headers.ContentType != null)
+        {
+            context.Response.ContentType = response.Content.Headers.ContentType.ToString();
+        }
+
         // Return the response
         context.Response.StatusCode = (int)response.StatusCode;
-        var content = await response.Content.ReadAsStringAsync();
+        var content = await response.Content.ReadAsByteArrayAsync();
 
-        await context.Response.WriteAsync(content);
+        await context.Response.Body.WriteAsync(content);
     //}
     //catch (HttpRequestException ex)
     //{
