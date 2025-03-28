@@ -1,4 +1,8 @@
 var builder = WebApplication.CreateBuilder(args);
+
+// Add CORS services
+builder.Services.AddCors();
+
 var app = builder.Build();
 
 var httpClient = new HttpClient();
