@@ -1,3 +1,5 @@
+using System;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add CORS services
@@ -23,37 +25,55 @@ app.MapGet("/proxy", async (HttpContext context) =>
 {
     var url = context.Request.Query["url"];
 
-    if (string.IsNullOrEmpty(url))
-    {
-        return Results.BadRequest("Query parameter 'url' is required.");
-    }
+    //if (string.IsNullOrEmpty(url))
+    //{
+    //    return Results.BadRequest("Query parameter 'url' is required.");
+    //}
 
-    try
-    {
-        // Validate URL
-        if (!Uri.TryCreate(url, UriKind.Absolute, out var uri) || 
-            (uri.Scheme != Uri.UriSchemeHttp && uri.Scheme != Uri.UriSchemeHttps))
+    //try
+    //{
+    //// Validate URL
+    //if (!Uri.TryCreate(url, UriKind.Absolute, out var uri) || 
+    //    (uri.Scheme != Uri.UriSchemeHttp && uri.Scheme != Uri.UriSchemeHttps))
+    //{
+    //    return Results.BadRequest("Invalid or unsafe URL.");
+    //}
+
+    //// Fetch the response
+    //var response = await httpClient.GetAsync(uri);
+    //response.EnsureSuccessStatusCode();
+
+    //// Log the request
+    //Console.WriteLine($"Fetched {url} with status code {response.StatusCode}");
+
+    //// Read response content
+    //var content = await response.Content.ReadAsStringAsync();
+    //var contentType = response.Content.Headers.ContentType?.ToString() ?? "application/octet-stream";
+
+    //return Results.Content(content, contentType);
+
+        if (context.Request.Headers.ContainsKey("Authorization"))
         {
-            return Results.BadRequest("Invalid or unsafe URL.");
+            httpClient.DefaultRequestHeaders.Add("Authorization", context.Request.Headers["Authorization"].ToString());
         }
 
-        // Fetch the response
-        var response = await httpClient.GetAsync(uri);
-        response.EnsureSuccessStatusCode();
+        var response = await httpClient.GetAsync(url);
 
-        // Log the request
-        Console.WriteLine($"Fetched {url} with status code {response.StatusCode}");
+        // Set the CORS headers
+        context.Response.Headers.Append("Access-Control-Allow-Origin", "*");
+        context.Response.Headers.Append("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+        context.Response.Headers.Append("Access-Control-Allow-Headers", "Content-Type, Authorization");
 
-        // Read response content
+        // Return the response
+        context.Response.StatusCode = (int)response.StatusCode;
         var content = await response.Content.ReadAsStringAsync();
-        var contentType = response.Content.Headers.ContentType?.ToString() ?? "application/octet-stream";
 
-        return Results.Content(content, contentType);
-    }
-    catch (HttpRequestException ex)
-    {
-        return Results.Problem($"Error fetching URL: {ex.Message}");
-    }
+        await context.Response.WriteAsync(content);
+    //}
+    //catch (HttpRequestException ex)
+    //{
+    //    return Results.Problem($"Error fetching URL: {ex.Message}");
+    //}
 });
 
 app.Run();
