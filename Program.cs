@@ -40,10 +40,10 @@ app.MapGet("/proxy", async (HttpContext context) =>
     //    httpClient.DefaultRequestHeaders.Add("Origin", context.Request.Headers["Origin"].ToString());
     //}
 
-    //if (context.Request.Headers.ContainsKey("Referer"))
-    //{
-    //    httpClient.DefaultRequestHeaders.Add("Referer", context.Request.Headers["Referer"].ToString());
-    //}
+    if (context.Request.Headers.ContainsKey("Referer"))
+    {
+        httpClient.DefaultRequestHeaders.Add("Referer", context.Request.Headers["Referer"].ToString());
+    }
 
     var response = await httpClient.GetAsync(url);
 
@@ -52,11 +52,6 @@ app.MapGet("/proxy", async (HttpContext context) =>
     {
         context.Response.ContentType = response.Content.Headers.ContentType.ToString();
     }
-
-    //// Set the CORS headers
-    //context.Response.Headers.Append("Access-Control-Allow-Origin", "*");
-    //context.Response.Headers.Append("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-    //context.Response.Headers.Append("Access-Control-Allow-Headers", "Content-Type, Authorization");
 
     // Return the response
     context.Response.StatusCode = (int)response.StatusCode;
